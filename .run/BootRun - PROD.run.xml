@@ -4,9 +4,9 @@
       <option name="env">
         <map>
           <entry key="DATABASE_IP" value="localhost" />
-          <entry key="DATABASE_NAME" value="postgres" />
-          <entry key="DATABASE_PASSWORD" value="postgres" />
-          <entry key="DATABASE_PORT" value="5432" />
+          <entry key="DATABASE_NAME" value="orbit" />
+          <entry key="DATABASE_PASSWORD" value="orbitAPI@2026" />
+          <entry key="DATABASE_PORT" value="5433" />
           <entry key="DATABASE_USER" value="postgres" />
         </map>
       </option>

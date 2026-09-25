@@ -1,4 +1,4 @@
-package br.com.software.config;
+package br.com.orbitapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;

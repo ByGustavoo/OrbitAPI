@@ -3,11 +3,11 @@ logging:
 
 server:
   servlet:
-    context-path: /SpringBootTemplate
+    context-path: /OrbitAPI
 
 spring:
   application:
-    name: springbootemplate
+    name: orbitapi
 
   servlet:
     encoding:
@@ -19,9 +19,9 @@ spring:
 
   flyway:
     enabled: true
-    schema: springbootemplate
+    schema: orbitapi
     baseline-on-migrate: true
-    default-schema: springbootemplate
+    default-schema: orbitapi
 
   web:
     error:
@@ -45,7 +45,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 server:
-  port: 9017
+  port: 9018
 
 ---
 
@@ -55,7 +55,7 @@ spring:
       on-profile: prod
 
 server:
-  port: 9027
+  port: 9028
 
 ---
 

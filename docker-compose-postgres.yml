@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: orbit-postgres
+    environment:
+      POSTGRES_DB: orbit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: orbitAPI@2026
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+  redis:
+    container_name: "orbit-redis"
+    image: "redis:alpine3.23"
+
+    ports:
+      - "6380:6379"
+
+    restart: always
+
+volumes:
+  postgres-data:
