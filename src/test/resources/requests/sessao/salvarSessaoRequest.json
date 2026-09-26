@@ -1,0 +1,11 @@
+{
+  "atividadeId": %d,
+  "tarefaId": null,
+  "modo": "POMODORO",
+  "origem": "CRONOMETRO",
+  "inicio": "2026-09-24T21:00:00.000Z",
+  "fim": "2026-09-24T21:58:00.000Z",
+  "duracaoSegundos": 3000,
+  "ciclosConcluidos": 2,
+  "observacao": "Revisei a lição 12."
+}

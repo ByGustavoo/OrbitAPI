@@ -1,0 +1,11 @@
+{
+  "atividadeId": %d,
+  "tarefaId": null,
+  "modo": "LIVRE",
+  "origem": "MANUAL",
+  "inicio": "2026-09-23T10:00:00.000Z",
+  "fim": "2026-09-23T11:30:00.000Z",
+  "duracaoSegundos": 5100,
+  "ciclosConcluidos": null,
+  "observacao": "Capítulos 3 e 4"
+}

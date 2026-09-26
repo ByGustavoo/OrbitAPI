@@ -1,0 +1,14 @@
+{
+  "titulo": "Pagar as contas de luz e água",
+  "descricao": "Vencem no fim do mês",
+  "data": "2026-09-30",
+  "diaInteiro": true,
+  "horarioInicio": null,
+  "horarioFim": null,
+  "prioridade": "URGENTE",
+  "situacao": "EM_ANDAMENTO",
+  "categoriaId": null,
+  "atividadeId": null,
+  "lembreteMinutosAntes": null,
+  "recorrencia": null
+}

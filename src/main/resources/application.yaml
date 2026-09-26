@@ -5,6 +5,10 @@ server:
   servlet:
     context-path: /OrbitAPI
 
+orbitapi:
+  cors:
+    origens-permitidas: "http://localhost:5173"
+
 spring:
   application:
     name: orbitapi
@@ -47,6 +51,10 @@ logging:
 server:
   port: 9018
 
+orbitapi:
+  cors:
+    origens-permitidas: "http://localhost:[*],http://127.0.0.1:[*]"
+
 ---
 
 spring:
@@ -63,3 +71,6 @@ spring:
   config:
     activate:
       on-profile: test
+
+  flyway:
+    locations: classpath:db/migration,classpath:db/test

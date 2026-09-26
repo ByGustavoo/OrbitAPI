@@ -1,0 +1,18 @@
+{
+  "titulo": "Academia",
+  "descricao": null,
+  "data": "2026-09-28",
+  "diaInteiro": false,
+  "horarioInicio": "07:00",
+  "horarioFim": "08:00",
+  "prioridade": "BAIXA",
+  "situacao": "PENDENTE",
+  "categoriaId": null,
+  "atividadeId": null,
+  "lembreteMinutosAntes": 15,
+  "recorrencia": {
+    "frequencia": "DIAS_DA_SEMANA",
+    "diasSemana": ["SEGUNDA", "QUARTA", "SEXTA"],
+    "dataFim": "2026-12-18"
+  }
+}
