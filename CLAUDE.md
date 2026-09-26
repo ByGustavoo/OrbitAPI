@@ -67,6 +67,10 @@ src/main/resources/
   log4j2.xml                 console sempre; em prod, arquivo rotativo em /app/logs/OrbitAPI.log (30 dias)
 .run/                        run configurations do IntelliJ (BootRun DEV/PROD, build sem testes, testes)
 docker-compose-postgres.yml  orbit-postgres (PostgreSQL 18, banco orbit) na 5433 e orbit-redis na 6380
+docker-compose-orbitapi.yml  a imagem publicada (OrbitAPI, perfil prod, 9028) e o orbit-redis; banco e CORS
+                             vêm do .env (modelo em .env.example)
+Dockerfile                   build com Gradle e runtime em eclipse-temurin:25-jre
+.github/workflows/           workflow.yml (build + testes em todo PR para a main) e release.yml
 ```
 
 Os pacotes seguem o layout da skill `java-clean-architecture` conforme forem surgindo:
@@ -91,6 +95,27 @@ Swagger UI responde em `http://localhost:9018/OrbitAPI/swagger-ui.html`. `tasks.
 O aviso `Error opening zip file ... byte-buddy-agent` no `./gradlew test` vem do acento em
 `Usuário` no caminho do cache do Gradle e não afeta os testes: confira o resultado em
 `build/test-results/test`.
+
+## Docker e release
+
+Mesmo modelo do PrismaAPI e do OrbitWeb:
+
+- **CI** (`workflow.yml`): em todo PR para a `main`, sobe um PostgreSQL 18 na 5433 e roda
+  `./gradlew build jacocoTestReport`. Os secrets `POSTGRES_DATABASE`, `POSTGRES_USER` e
+  `POSTGRES_PASSWORD` criam o banco e chegam aos testes como `DATABASE_TEST_NAME`, `DATABASE_USER` e
+  `DATABASE_PASSWORD`
+- **Release** (`release.yml`): no merge de um PR na `main` (ou manual, escolhendo o incremento),
+  calcula a versão a partir da última tag `vX.Y.Z` (sem tag, usa o `version` do `build.gradle.kts`),
+  com rótulo `release:major` / `release:minor` no PR, `patch` sem rótulo. Publica a imagem
+  `linux/amd64` e `linux/arm64` no Docker Hub com a versão e `latest`, e cria a tag e a release no
+  GitHub. Secrets: `DOCKER_IMAGE` (`gurudohimalaia/orbitapi`), `DOCKER_USERNAME` e `DOCKER_PASSWORD`
+- A versão chega ao jar por `-Pversao` (`version = providers.gradleProperty("versao")...`); não volte
+  o `version` para um literal simples
+- **CORS em produção.** O perfil `prod` só libera `http://localhost:5173`, e o OrbitWeb em container
+  roda na 9031 (a 5173 é do PrismaWeb). O `docker-compose-orbitapi.yml` sobrescreve as origens por
+  `ORBITAPI_CORS_ORIGENS_PERMITIDAS`, com padrão `http://localhost:9031`
+- **Banco a partir do container.** `DATABASE_IP=localhost` aponta para o próprio container; use o IP
+  da máquina ou `host.docker.internal`
 
 ## Perfis e ambiente
 
