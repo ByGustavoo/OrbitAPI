@@ -6,6 +6,7 @@ import io.lettuce.core.ClientOptions;
 import io.lettuce.core.SocketOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.cache.autoconfigure.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.Cache;
@@ -102,23 +103,23 @@ public class RedisConfig implements CachingConfigurer {
         return new CacheErrorHandler() {
 
             @Override
-            public void handleCacheGetError(RuntimeException ex, Cache cache, Object chave) {
+            public void handleCacheGetError(@NonNull RuntimeException ex, @NonNull Cache cache, @NonNull Object chave) {
                 log.warn("Falha ao ler o cache! Buscando no banco... - Cache: {} - Chave: {} - Erro: {}", cache.getName(), chave, ex.getMessage());
             }
 
             @Override
-            public void handleCachePutError(RuntimeException ex, Cache cache, Object chave, Object valor) {
+            public void handleCachePutError(@NonNull RuntimeException ex, @NonNull Cache cache, @NonNull Object chave, Object valor) {
                 log.warn("Falha ao gravar no cache! - Cache: {} - Chave: {} - Erro: {}", cache.getName(), chave, ex.getMessage());
             }
 
             @Override
-            public void handleCacheEvictError(RuntimeException ex, Cache cache, Object chave) {
+            public void handleCacheEvictError(@NonNull RuntimeException ex, @NonNull Cache cache, @NonNull Object chave) {
                 log.error("Falha ao remover do cache! Renovando as chaves... - Cache: {} - Chave: {} - Erro: {}", cache.getName(), chave, ex.getMessage());
                 geracao.incrementAndGet();
             }
 
             @Override
-            public void handleCacheClearError(RuntimeException ex, Cache cache) {
+            public void handleCacheClearError(@NonNull RuntimeException ex, @NonNull Cache cache) {
                 log.error("Falha ao limpar o cache! Renovando as chaves... - Cache: {} - Erro: {}", cache.getName(), ex.getMessage());
                 geracao.incrementAndGet();
             }
