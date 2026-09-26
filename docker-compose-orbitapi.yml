@@ -1,0 +1,34 @@
+services:
+  orbitapi:
+    container_name: "OrbitAPI"
+    image: "gurudohimalaia/orbitapi:latest"
+    ports:
+      - "9028:9028"
+    environment:
+      - TZ=GMT-3
+      - SPRING_PROFILES_ACTIVE=prod
+
+      - DATABASE_IP=${DATABASE_IP}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+
+      - REDIS_IP=redis
+      - REDIS_PORT=6379
+
+      - ORBITAPI_CORS_ORIGENS_PERMITIDAS=${ORBITAPI_CORS_ORIGENS_PERMITIDAS:-http://localhost:9031}
+
+    volumes:
+      - ./logs:/app/logs
+
+    restart: always
+
+  redis:
+    container_name: "orbit-redis"
+    image: "redis:alpine3.23"
+
+    ports:
+      - "6380:6379"
+
+    restart: always
