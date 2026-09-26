@@ -40,21 +40,6 @@
 
 <br> 
 
-## 📌 Status do Projeto
-
-Estrutura inicial pronta a partir do template Spring Boot: identidade da aplicação, perfis,
-banco e logging configurados. Entidades, migrations e endpoints ainda serão implementados.
-
-O que a API precisa entregar está especificado no OrbitWeb:
-
-* [`docs/api-contrato.md`](https://github.com/ByGustavoo/OrbitWeb/blob/main/docs/api-contrato.md) — rotas, corpos, respostas e erros
-
-* [`docs/backend.md`](https://github.com/ByGustavoo/OrbitWeb/blob/main/docs/backend.md) — entidades, enums, DTOs e validações
-
-* [`docs/regras-negocio.md`](https://github.com/ByGustavoo/OrbitWeb/blob/main/docs/regras-negocio.md) — regras funcionais com exemplos
-
-<br> 
-
 ## ⚙️ Pré-requisitos
 
 * JDK 25 instalada (o projeto não declara resolver de toolchain, então o Gradle não baixa a JDK sozinho)
