@@ -18,6 +18,8 @@ import br.com.orbitapi.repository.tarefa.TarefaRepository;
 import br.com.orbitapi.service.fuso.FusoHorarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class SessaoService {
     private final AtividadeRepository atividadeRepository;
     private static final Sort MAIS_RECENTES_PRIMEIRO = Sort.by(Sort.Order.desc("inicio"), Sort.Order.desc("id"));
 
+    @Cacheable("sessoes")
     @Transactional(readOnly = true)
     public PaginaDTO<SessaoEstudoDTO> listar(FiltroSessoesDTO filtro) {
         log.info("Listando as sessões de estudo... - Filtro: {}", filtro);
@@ -53,6 +56,7 @@ public class SessaoService {
     }
 
     @Transactional
+    @CacheEvict(value = {"dashboard", "estudos", "sessoes"}, allEntries = true)
     public SessaoEstudoDTO salvar(SessaoEnvioDTO sessaoEnvioDTO) {
         log.info("Salvando a sessão de estudo... - Atividade: [{}] - Início: {}", sessaoEnvioDTO.atividadeId(), sessaoEnvioDTO.inicio());
         var sessao = sessaoMapper.toEntity(sessaoEnvioDTO);
@@ -65,6 +69,7 @@ public class SessaoService {
     }
 
     @Transactional
+    @CacheEvict(value = {"dashboard", "estudos", "sessoes"}, allEntries = true)
     public SessaoEstudoDTO atualizar(Long id, SessaoEnvioDTO sessaoEnvioDTO) {
         log.info("Atualizando a sessão de estudo... - ID: [{}]", id);
         var sessao = buscar(id);
@@ -77,6 +82,7 @@ public class SessaoService {
     }
 
     @Transactional
+    @CacheEvict(value = {"dashboard", "estudos", "sessoes"}, allEntries = true)
     public void deletar(Long id) {
         log.info("Excluindo a sessão de estudo... - ID: [{}]", id);
         sessaoRepository.delete(buscar(id));

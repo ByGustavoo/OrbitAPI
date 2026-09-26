@@ -10,6 +10,7 @@ import br.com.orbitapi.repository.tarefa.TarefaRepository;
 import br.com.orbitapi.service.fuso.FusoHorarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +45,14 @@ public class SerieRecorrenciaService {
     }
 
     @Transactional
-    public void estender(Instant agora) {
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true, condition = "#result")
+    public boolean estender(Instant agora) {
         var hoje = LocalDate.ofInstant(agora, fusoHorarioService.obter());
+        var series = serieRecorrenciaRepository.buscarParaEstender(hoje.plusMonths(3));
 
-        serieRecorrenciaRepository.buscarParaEstender(hoje.plusMonths(3))
-                .forEach(serie -> estender(serie, hoje, agora));
+        series.forEach(serie -> estender(serie, hoje, agora));
+
+        return !series.isEmpty();
     }
 
     @Transactional

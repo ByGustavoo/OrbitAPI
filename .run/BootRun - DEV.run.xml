@@ -8,6 +8,8 @@
           <entry key="DATABASE_PASSWORD" value="orbitAPI@2026" />
           <entry key="DATABASE_PORT" value="5433" />
           <entry key="DATABASE_USER" value="postgres" />
+          <entry key="REDIS_IP" value="localhost" />
+          <entry key="REDIS_PORT" value="6380" />
         </map>
       </option>
       <option name="executionName" />

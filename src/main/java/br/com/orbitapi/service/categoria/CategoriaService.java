@@ -11,6 +11,8 @@ import br.com.orbitapi.repository.categoria.CategoriaRepository;
 import br.com.orbitapi.repository.tarefa.TarefaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private static final Collator ORDEM_ALFABETICA = Collator.getInstance(Locale.forLanguageTag("pt-BR"));
 
+    @Cacheable("categorias")
     @Transactional(readOnly = true)
     public List<CategoriaDTO> listar() {
         log.info("Listando as categorias...");
@@ -45,6 +48,7 @@ public class CategoriaService {
     }
 
     @Transactional
+    @CacheEvict(value = "categorias", allEntries = true)
     public CategoriaDTO salvar(CategoriaEnvioDTO categoriaEnvioDTO) {
         log.info("Salvando a categoria... - Nome: {}", categoriaEnvioDTO.nome());
         validarNomeUnico(categoriaEnvioDTO.nome(), null);
@@ -55,6 +59,7 @@ public class CategoriaService {
     }
 
     @Transactional
+    @CacheEvict(value = "categorias", allEntries = true)
     public CategoriaDTO atualizar(Long id, CategoriaEnvioDTO categoriaEnvioDTO) {
         log.info("Atualizando a categoria... - ID: [{}]", id);
         var categoria = buscar(id);
@@ -66,6 +71,7 @@ public class CategoriaService {
     }
 
     @Transactional
+    @CacheEvict(value = "categorias", allEntries = true)
     public void deletar(Long id) {
         log.info("Excluindo a categoria... - ID: [{}]", id);
         categoriaRepository.delete(buscar(id));

@@ -15,6 +15,7 @@ import br.com.orbitapi.service.fuso.FusoHorarioService;
 import br.com.orbitapi.service.tarefa.SerieRecorrenciaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +86,7 @@ public class DashboardService {
                 dashboardRepository.buscarEventosRecentes(agora, 6));
     }
 
+    @Cacheable("dashboard")
     @Transactional(readOnly = true)
     public SequenciaDTO buscarSequencia(LocalDate data) {
         log.info("Buscando a sequência de dias... - Data: {}", data);

@@ -12,6 +12,8 @@
 
 ## 🚀 Ferramentas Utilizadas
 
+* 🟥 Redis
+
 * 🐳 Docker
 
 * 🕊️ Flyway
@@ -57,13 +59,13 @@ O que a API precisa entregar está especificado no OrbitWeb:
 
 * JDK 25 instalada (o projeto não declara resolver de toolchain, então o Gradle não baixa a JDK sozinho)
 
-* PostgreSQL acessível para os perfis `dev` e `prod`
+* PostgreSQL e Redis acessíveis para os perfis `dev` e `prod`
 
 <br> 
 
 ## 🔐 Variáveis de Ambiente
 
-Obrigatórias nos perfis `dev` e `prod` (usadas por `DataBaseConfig`):
+Obrigatórias nos perfis `dev` e `prod` (usadas por `DataBaseConfig` e `RedisConfig`):
 
 | Variável | Descrição |
 |---|---|
@@ -72,6 +74,9 @@ Obrigatórias nos perfis `dev` e `prod` (usadas por `DataBaseConfig`):
 | `DATABASE_NAME` | Nome do banco |
 | `DATABASE_USER` | Usuário do banco |
 | `DATABASE_PASSWORD` | Senha do banco |
+| `REDIS_IP` | Host do Redis |
+| `REDIS_PORT` | Porta do Redis |
+| `REDIS_PASSWORD` | Senha do Redis (opcional) |
 
 <br> 
 
@@ -122,7 +127,7 @@ docker compose -f docker-compose-postgres.yml up -d
 ```
 src/main/java/br/com/orbitapi
 ├── OrbitAPIApplication.java    # Classe de inicialização
-└── config                      # DataBaseConfig
+└── config                      # DataBaseConfig, RedisConfig
 
 src/main/resources
 ├── application.yaml            # Configuração por perfil (dev, prod, test)

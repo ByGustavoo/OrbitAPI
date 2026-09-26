@@ -15,6 +15,7 @@ import br.com.orbitapi.repository.sessao.SessaoRepository;
 import br.com.orbitapi.service.fuso.FusoHorarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class EstudoService {
     private final AtividadeRepository atividadeRepository;
     private static final Collator ORDEM_ALFABETICA = Collator.getInstance(Locale.forLanguageTag("pt-BR"));
 
+    @Cacheable("estudos")
     @Transactional(readOnly = true)
     public ResumoEstudosDTO resumir(LocalDate dataInicial, LocalDate dataFinal, Long atividadeId) {
         log.info("Resumindo os estudos... - De: {} - Até: {} - Atividade: [{}]", dataInicial, dataFinal, atividadeId);
@@ -61,6 +63,7 @@ public class EstudoService {
         return new ResumoEstudosDTO(totalSegundos, totalSessoes, media, porDia, porAtividade);
     }
 
+    @Cacheable("estudos")
     @Transactional(readOnly = true)
     public List<ProgressoMetaDTO> buscarProgressoSemanal(LocalDate inicioSemana) {
         log.info("Buscando o progresso das metas... - Semana: {}", inicioSemana);
@@ -78,6 +81,7 @@ public class EstudoService {
                 .toList();
     }
 
+    @Cacheable("estudos")
     @Transactional(readOnly = true)
     public MapaCalorDTO gerarMapaCalor(LocalDate dataInicial, LocalDate dataFinal) {
         log.info("Gerando o mapa de calor... - De: {} - Até: {}", dataInicial, dataFinal);

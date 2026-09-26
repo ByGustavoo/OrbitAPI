@@ -21,11 +21,16 @@ spring:
   jpa:
     open-in-view: false
 
+  data:
+    redis:
+      repositories:
+        enabled: false
+
   flyway:
     enabled: true
-    schema: orbitapi
-    baseline-on-migrate: true
+    schemas: orbitapi
     default-schema: orbitapi
+    baseline-on-migrate: true
 
   web:
     error:
@@ -71,6 +76,9 @@ spring:
   config:
     activate:
       on-profile: test
+
+  cache:
+    type: none
 
   flyway:
     locations: classpath:db/migration,classpath:db/test

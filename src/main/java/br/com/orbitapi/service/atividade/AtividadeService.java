@@ -12,6 +12,8 @@ import br.com.orbitapi.repository.atividade.AtividadeRepository;
 import br.com.orbitapi.repository.sessao.SessaoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class AtividadeService {
     private final AtividadeRepository atividadeRepository;
     private static final Collator ORDEM_ALFABETICA = Collator.getInstance(Locale.forLanguageTag("pt-BR"));
 
+    @Cacheable("atividades")
     @Transactional(readOnly = true)
     public List<AtividadeEstudoDTO> listar() {
         log.info("Listando as atividades de estudo...");
@@ -42,6 +45,7 @@ public class AtividadeService {
     }
 
     @Transactional
+    @CacheEvict(value = {"atividades", "estudos", "sessoes"}, allEntries = true)
     public AtividadeEstudoDTO salvar(AtividadeEnvioDTO atividadeEnvioDTO) {
         log.info("Salvando a atividade de estudo... - Nome: {}", atividadeEnvioDTO.nome());
         validarNomeUnico(atividadeEnvioDTO.nome(), null);
@@ -52,6 +56,7 @@ public class AtividadeService {
     }
 
     @Transactional
+    @CacheEvict(value = {"atividades", "estudos", "sessoes"}, allEntries = true)
     public AtividadeEstudoDTO atualizar(Long id, AtividadeEnvioDTO atividadeEnvioDTO) {
         log.info("Atualizando a atividade de estudo... - ID: [{}]", id);
         var atividade = buscar(id);
@@ -63,6 +68,7 @@ public class AtividadeService {
     }
 
     @Transactional
+    @CacheEvict(value = {"atividades", "estudos", "sessoes"}, allEntries = true)
     public AtividadeEstudoDTO alterarArquivamento(Long id, ArquivamentoAtividadeDTO arquivamentoAtividadeDTO) {
         log.info("Alterando o arquivamento da atividade de estudo... - ID: [{}] - Arquivada: {}", id, arquivamentoAtividadeDTO.arquivada());
         var atividade = buscar(id);
@@ -77,6 +83,7 @@ public class AtividadeService {
     }
 
     @Transactional
+    @CacheEvict(value = {"atividades", "estudos", "sessoes"}, allEntries = true)
     public void deletar(Long id) {
         log.info("Excluindo a atividade de estudo... - ID: [{}]", id);
         var atividade = buscar(id);

@@ -28,6 +28,7 @@ import br.com.orbitapi.repository.tarefa.TarefaRepository;
 import br.com.orbitapi.service.fuso.FusoHorarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +60,7 @@ public class TarefaService {
     private static final List<Situacao> EM_ABERTO = List.of(Situacao.PENDENTE, Situacao.EM_ANDAMENTO);
 
     @Transactional
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true)
     public TarefaDTO salvar(TarefaEnvioDTO tarefaEnvioDTO) {
         log.info("Salvando a tarefa... - Título: {}", tarefaEnvioDTO.titulo());
         var agora = Instant.now(clock).truncatedTo(ChronoUnit.MILLIS);
@@ -85,6 +87,7 @@ public class TarefaService {
     }
 
     @Transactional
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true)
     public TarefaDTO atualizar(Long id, EscopoAlteracao escopo, TarefaEnvioDTO tarefaEnvioDTO) {
         log.info("Atualizando a tarefa... - ID: [{}] - Escopo: {}", id, escopo);
         var agora = Instant.now(clock).truncatedTo(ChronoUnit.MILLIS);
@@ -152,6 +155,7 @@ public class TarefaService {
     }
 
     @Transactional
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true)
     public TarefaDTO alterarSituacao(Long id, SituacaoTarefaDTO situacaoTarefaDTO) {
         log.info("Alterando a situação da tarefa... - ID: [{}] - Situação: {}", id, situacaoTarefaDTO.situacao());
         var agora = Instant.now(clock).truncatedTo(ChronoUnit.MILLIS);
@@ -163,6 +167,7 @@ public class TarefaService {
     }
 
     @Transactional
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true)
     public List<TarefaDTO> reagendar(ReagendamentoDTO reagendamentoDTO) {
         log.info("Reagendando as tarefas... - Quantidade: {}", reagendamentoDTO.itens().size());
         var agora = Instant.now(clock).truncatedTo(ChronoUnit.MILLIS);
@@ -185,6 +190,7 @@ public class TarefaService {
     }
 
     @Transactional
+    @CacheEvict(value = {"categorias", "dashboard", "sessoes"}, allEntries = true)
     public void deletar(Long id, EscopoAlteracao escopo) {
         log.info("Excluindo a tarefa... - ID: [{}] - Escopo: {}", id, escopo);
         var tarefa = buscarTarefa(id);

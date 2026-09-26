@@ -40,7 +40,8 @@ class SerieRecorrenciaServiceTest extends AbstractTest {
         var serie = buscar(serieRecorrenciaRepository, item -> item.getGeradaAte() != null);
         var geradaAteAntes = serie.getGeradaAte();
 
-        Assertions.assertDoesNotThrow(() -> serieRecorrenciaService.estender(Instant.now()));
+        var estendeu = Assertions.assertDoesNotThrow(() -> serieRecorrenciaService.estender(Instant.now()));
+        Assertions.assertTrue(estendeu);
         Assertions.assertTrue(serie.getGeradaAte().isAfter(geradaAteAntes));
     }
 

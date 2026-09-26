@@ -40,6 +40,8 @@ Backend / API — release: branch + Pull Request (`origin`: `ByGustavoo/OrbitAPI
 - Java 25 (toolchain em `build.gradle.kts`), Gradle 9.6.1 com Kotlin DSL
 - Spring Boot 4.1.1: Web MVC, Data JPA, Validation, DevTools
 - PostgreSQL + Flyway (`spring-boot-starter-flyway`, `flyway-database-postgresql`)
+- Redis como cache (`spring-boot-starter-cache`, `spring-boot-starter-data-redis`), no mesmo modelo do
+  PrismaAPI
 - MapStruct 1.6.3 + Lombok (com `lombok-mapstruct-binding`)
 - Log4j2 — Logback e `spring-boot-starter-logging` são **excluídos** em
   `configurations.configureEach`; não reintroduza dependências que os tragam de volta
@@ -54,7 +56,8 @@ src/main/java/br/com/orbitapi/
   OrbitAPIApplication.java   classe de inicialização
   config/                    DataBaseConfig (DataSource dos perfis dev e prod), CorsConfig,
                              ValidationConfig (EL de métodos nas mensagens de validação),
-                             ClockConfig (Clock em UTC, injetado nos services)
+                             ClockConfig (Clock em UTC, injetado nos services),
+                             RedisConfig (conexão, chave, serialização e tolerância a falha do cache)
   service/fuso/              FusoHorarioService: o ZoneId do X-Fuso-Horario da requisição atual
   validation/                restrições de classe (TarefaConsistente, SessaoConsistente) que precisam de
                              mais de um campo; o validador de sessão recebe Clock e FusoHorarioService
@@ -105,10 +108,13 @@ O aviso `Error opening zip file ... byte-buddy-agent` no `./gradlew test` vem do
   versionada. O Flyway roda a repetível depois das versionadas e a reaplica quando o conteúdo
   muda, então ela começa com `TRUNCATE ... RESTART IDENTITY CASCADE` das tabelas que preenche.
   As categorias não entram nela: vêm da `V1.0`, que as semeia também em produção
+- No `test`, o `RedisConfig` não vale (`@Profile({"dev", "prod"})`) e `spring.cache.type: none` desliga o
+  cache, então os testes não dependem de um Redis rodando
 - Variáveis obrigatórias em `dev` e `prod`, lidas pelo `DataBaseConfig`: `DATABASE_IP`,
-  `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER` e `DATABASE_PASSWORD`. Sem elas a aplicação
-  não sobe. As run configurations em `.run/` já as definem com os valores do
-  `docker-compose-postgres.yml` (`localhost:5433/orbit`)
+  `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER` e `DATABASE_PASSWORD`, e pelo `RedisConfig`:
+  `REDIS_IP` e `REDIS_PORT`. Sem elas a aplicação não sobe. `REDIS_PASSWORD` é opcional, porque o
+  `orbit-redis` sobe sem senha. As run configurations em `.run/` já as definem com os valores do
+  `docker-compose-postgres.yml` (`localhost:5433/orbit` e `localhost:6380`)
 - Flyway usa o schema `orbitapi` (`schemas` e `default-schema`), com `baseline-on-migrate`
 
 ## Convenções
@@ -192,4 +198,32 @@ Os nomes abaixo andam juntos — mudar um sem os outros quebra rotas, migrations
 - **Acentos no `curl` do Git Bash.** Um corpo com acento passado direto em `-d` chega fora de UTF-8 e
   a API responde 400 de JSON ilegível. Para testar à mão, grave o JSON num arquivo em UTF-8 e envie
   com `--data-binary @arquivo.json`
+- **Cache só nas leituras que dependem do dia, não do instante.** Passam pelo Redis (`@Cacheable`, TTL de
+  15 minutos): `categorias`, `atividades`, `sessoes`, os três de `estudos` e a sequência do Dashboard
+  (cache `dashboard`). Ficam de fora, de propósito, as leituras que calculam o prazo com `agora`: as
+  de tarefas (lista, por id, calendário), o resumo do Dashboard, o Histórico e a Revisão semanal. Nelas
+  uma tarefa vira `ATRASADA` no minuto em que passa do `horarioFim`, e um cache serviria "no prazo" até
+  o TTL vencer. Uma leitura nova só entra no cache se o resultado for função dos dados, do fuso e do dia
+- **A chave leva o dia e o fuso do cliente.** O `keyGenerator` do `RedisConfig` monta
+  `<hoje no fuso>:<fuso>:<geração>:<Classe>.<método>[parâmetros]`, porque o fuso chega pelo cabeçalho
+  e não pelos parâmetros, e muda tanto o dia de cada sessão quanto o "hoje" da sequência. "Hoje" vem
+  do `Clock` injetado, não de `LocalDate.now()`
+- **Cada escrita limpa os caches que leem a tabela alterada** (`@CacheEvict(allEntries = true)`):
+  categoria → `categorias`; atividade → `atividades`, `estudos`, `sessoes` (a sessão mostra nome e cor
+  da atividade); sessão → `dashboard`, `estudos`, `sessoes`; tarefa → `categorias` (contagem),
+  `dashboard` (conclusões da sequência), `sessoes` (título da tarefa). A nota da semana não afeta
+  nenhum. Um `GET` novo em cache, ou uma leitura nova de outra tabela num `GET` já em cache, exige
+  revisar essas listas
+- **A extensão das séries também escreve tarefas.** `SerieRecorrenciaService.estender` roda dentro de
+  leituras e cria ocorrências, então limpa os caches de tarefa, mas só quando estendeu alguma série
+  (`condition = "#result"`, e por isso devolve `boolean`). Limpar sempre esvaziaria o cache a cada
+  `GET` de tarefas
+- **O cache nunca derruba a API.** Com o Redis fora, o `errorHandler` do `RedisConfig` registra a falha
+  e a leitura vai ao banco; o Lettuce recusa comandos enquanto está desconectado e desiste em 2 s. Uma
+  limpeza que falha incrementa a geração da chave, iniciada no instante em que a aplicação sobe, e a
+  chave velha nunca mais é lida. Por isso as gravações são imediatas (`immediateWrites`): no modo
+  assíncrono, a falha da limpeza não chegaria ao handler
+- **O valor vai para o Redis em JSON, sem `Serializable`.** O `TypeResolverBuilder` do `RedisConfig`
+  grava o tipo em tudo que não é primitivo, records e listas de `.toList()` inclusive, e registra
+  qualquer `List` como `ArrayList`. Campo de DTO em cache precisa voltar do JSON como saiu
 - `OrbitAPIApplication.main` é `static void main` sem `public` — sintaxe do Java 25, que o `bootRun` aceita
