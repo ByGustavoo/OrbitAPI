@@ -21,7 +21,7 @@ FROM generate_series(CURRENT_DATE - 3, CURRENT_DATE + 30, INTERVAL '1 day') AS d
 
 INSERT INTO orbitapi.sessoes (atividade_id, tarefa_id, modo, origem, inicio, fim, duracao_segundos, ciclos_concluidos, observacao)
 VALUES ((SELECT id FROM orbitapi.atividades WHERE nome = 'Inglês'), (SELECT id FROM orbitapi.tarefas WHERE titulo = 'Revisar verbos irregulares'), 'POMODORO', 'CRONOMETRO', now() - INTERVAL '2 days 1 hour', now() - INTERVAL '2 days', 3000, 2, 'Revisei a lição 12.'),
-       ((SELECT id FROM orbitapi.atividades WHERE nome = 'Leitura'), NULL, 'LIVRE', 'MANUAL', now() - INTERVAL '1 day 2 hours', now() - INTERVAL '1 day 1 hour', 3600, NULL, NULL);
+       ((SELECT id FROM orbitapi.atividades WHERE nome = 'Leitura'), NULL, 'LIVRE', 'MANUAL', now() - INTERVAL '1 day 1 hour', now() - INTERVAL '1 day', 3600, NULL, NULL);
 
 INSERT INTO orbitapi.eventos_tarefa (tipo, tarefa_id, titulo, ocorrido_em, anterior, novo)
 VALUES ('TAREFA_CRIADA', (SELECT id FROM orbitapi.tarefas WHERE titulo = 'Pagar a conta de luz'), 'Pagar a conta de luz', now() - INTERVAL '1 day', NULL, NULL),

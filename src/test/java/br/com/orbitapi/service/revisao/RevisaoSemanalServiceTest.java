@@ -25,7 +25,8 @@ class RevisaoSemanalServiceTest extends AbstractTest {
 
     @Test
     void buscarTest() {
-        var inicioSemana = LocalDate.now(ZoneId.of("America/Sao_Paulo")).with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        var hoje = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
+        var inicioSemana = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
 
         var revisao = Assertions.assertDoesNotThrow(() -> revisaoSemanalService.buscar(inicioSemana));
         Assertions.assertTrue(revisao.emAndamento());
@@ -33,7 +34,7 @@ class RevisaoSemanalServiceTest extends AbstractTest {
         Assertions.assertFalse(revisao.tarefas().pendentes().isEmpty());
         Assertions.assertEquals(2, revisao.resumo().sessoes() + revisao.semanaAnterior().sessoes());
         Assertions.assertEquals(1, revisao.resumo().criadas() + revisao.semanaAnterior().criadas());
-        Assertions.assertEquals(7, revisao.proximaSemana().agendadas());
+        Assertions.assertEquals(hoje.getDayOfWeek() == DayOfWeek.SATURDAY ? 8 : 7, revisao.proximaSemana().agendadas());
         Assertions.assertEquals(1, revisao.proximaSemana().atrasadasEmAberto());
     }
 
