@@ -43,6 +43,7 @@ jobs:
 
       - name: Build + Testes + JaCoCo
         env:
+          TZ: America/Sao_Paulo
           DATABASE_IP: localhost
           DATABASE_PORT: 5433
           DATABASE_TEST_NAME: ${{ secrets.POSTGRES_DATABASE }}

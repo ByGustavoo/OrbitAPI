@@ -127,12 +127,18 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   `DATABASE_TEST_NAME` (e não de `DATABASE_NAME`) para que uma variável de dev nunca leve os testes
   ao banco de dev. O banco precisa existir:
   `docker exec orbit-postgres psql -U postgres -c "CREATE DATABASE orbit_teste"`
-- **Massa de testes** em `src/test/resources/db/test/R__PopularBanco.sql`, lida só no perfil `test`
-  (`spring.flyway.locations`). É uma migration **repetível**, e não `V<próxima>__`, como no modelo da
-  skill: com migrations criadas uma por endpoint, um número fixo ficaria para trás da próxima
-  versionada. O Flyway roda a repetível depois das versionadas e a reaplica quando o conteúdo
-  muda, então ela começa com `TRUNCATE ... RESTART IDENTITY CASCADE` das tabelas que preenche.
-  As categorias não entram nela: vêm da `V1.0`, que as semeia também em produção
+- **Massa de testes** em `src/test/resources/db/test/afterMigrate__PopularBanco.sql`, lida só no perfil
+  `test` (`spring.flyway.locations`). É um **callback `afterMigrate`** do Flyway, e não
+  `V<próxima>__`, como no modelo da skill, nem repetível (`R__`): o callback roda a cada `migrate`, ou
+  seja, a cada contexto de teste que sobe. As datas da massa (`now()`, `CURRENT_DATE`) são relativas ao
+  momento em que ela roda; uma `R__` só é reaplicada quando o conteúdo muda, e a massa envelhecia
+  entre uma execução e outra, quebrando os testes que contam tarefas e sessões por dia. Ela começa
+  com `TRUNCATE ... RESTART IDENTITY CASCADE` das tabelas que preenche. As categorias não entram
+  nela: vêm da `V1.0`, que as semeia também em produção
+- **Datas da massa que não dependem da hora.** Dois registros semeados que precisam cair em dias
+  diferentes ficam a 24 h um do outro (as duas sessões: `now() - 2 days 1 hour` e `now() - 1 day 1 hour`),
+  e um teste cujo resultado muda com o dia da semana diz isso na asserção (a tarefa de amanhã entra
+  na "próxima semana" da revisão quando hoje é sábado)
 - No `test`, o `RedisConfig` não vale (`@Profile({"dev", "prod"})`) e `spring.cache.type: none` desliga o
   cache, então os testes não dependem de um Redis rodando
 - Variáveis obrigatórias em `dev` e `prod`, lidas pelo `DataBaseConfig`: `DATABASE_IP`,
@@ -186,9 +192,14 @@ Os nomes abaixo andam juntos — mudar um sem os outros quebra rotas, migrations
   quando uma tarefa fica atrasada (`api-contrato.md`, seção 1.4). Nunca use `LocalDate.now()` num
   service: calcule `Instant.now(clock)` e converta com `fusoHorarioService.obter()`. Sem o
   cabeçalho, ou com valor inválido, vale `America/Sao_Paulo`
-- **`CURRENT_DATE` do banco é UTC.** O `orbit-postgres` roda em UTC; à noite no Brasil, o
-  `CURRENT_DATE` da massa de testes já é o dia seguinte ao `LocalDate.now()` da JVM. Teste que
-  compara com a data de uma tarefa semeada usa a própria data dela, não `LocalDate.now()`
+- **`CURRENT_DATE` segue o fuso da conexão.** O `orbit-postgres` roda em UTC, mas o driver JDBC abre a
+  sessão no fuso da JVM, então o `CURRENT_DATE` da massa é o `LocalDate.now()` da JVM, e não o dia em
+  `America/Sao_Paulo` que a API usa sem o cabeçalho. Por isso o CI roda os testes com
+  `TZ: America/Sao_Paulo`. Teste que compara com a data de uma tarefa semeada usa a própria data
+  dela, não `LocalDate.now()`
+- **Banco `orbit_teste` criado antes do callback.** Quem ainda tem a linha da antiga `R__PopularBanco.sql`
+  no histórico do Flyway recebe erro de validação (migration aplicada que não existe mais). Apague-a:
+  `docker exec orbit-postgres psql -U postgres -d orbit_teste -c "DELETE FROM orbitapi.flyway_schema_history WHERE script = 'R__PopularBanco.sql'"`
 - **O prazo existe em dois lugares.** `PrazoService` (Java, para uma tarefa) e
   `TarefaPrazoSql.TAREFAS_COM_PRAZO` (CTE nativa usada pela lista, pelo calendário e pelo
   Histórico) implementam a mesma regra. Mudou uma, mude a outra; o teste manual do `GET /v1/tarefas` compara as duas em
