@@ -1,3 +1,6 @@
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+
 plugins {
     java
     id("jacoco")
@@ -7,6 +10,14 @@ plugins {
 
 version = providers.gradleProperty("versao").getOrElse("1.0.0")
 group = "br.com.orbitapi"
+
+springBoot {
+    buildInfo {
+        properties {
+            time.set(Instant.now().truncatedTo(ChronoUnit.SECONDS).toString())
+        }
+    }
+}
 
 java {
     toolchain {
