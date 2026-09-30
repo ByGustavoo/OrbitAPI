@@ -134,7 +134,7 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   momento em que ela roda; uma `R__` só é reaplicada quando o conteúdo muda, e a massa envelhecia
   entre uma execução e outra, quebrando os testes que contam tarefas e sessões por dia. Ela começa
   com `TRUNCATE ... RESTART IDENTITY CASCADE` das tabelas que preenche. As categorias não entram
-  nela: vêm da `V1.0`, que as semeia também em produção
+  nela: vêm da `V1.0` e da `V1.5`, que as semeiam também em produção
 - **Datas da massa que não dependem da hora.** Dois registros semeados que precisam cair em dias
   diferentes ficam a 24 h um do outro (as duas sessões: `now() - 2 days 1 hour` e `now() - 1 day 1 hour`),
   e um teste cujo resultado muda com o dia da semana diz isso na asserção (a tarefa de amanhã entra
@@ -159,6 +159,9 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   controller levam o nome da ação, não do verbo HTTP
 - Migrations em `V1.<n>__<Acao>.sql` (`V1.0__CriarCategorias.sql`), uma por recurso, na ordem em que
   os endpoints são implementados
+- Migration aplicada não se edita, porque o Flyway recusa o checksum diferente. Dados novos vão numa
+  migration nova, como a `V1.5__AdicionarCategorias.sql`, que usa `ON CONFLICT DO NOTHING` para não
+  falhar num banco em que alguém já criou uma categoria com o mesmo nome
 - Mapeamento entidade ↔ DTO com MapStruct
 - Nenhum comentário em arquivo do repositório (exceto `.env`/`.env.example`); explicações vão aqui
   ou no README
