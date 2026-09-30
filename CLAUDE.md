@@ -7,13 +7,13 @@ agenda, calendário, cronômetro de estudos, histórico e revisão semanal — e
 as regras de negócio, a persistência em PostgreSQL e os endpoints que o front consome.
 
 O projeto saiu do template `ByGustavoo/SpringBootTemplate` e foi construído endpoint a endpoint;
-os 30 endpoints do índice do contrato estão implementados. O que a API faz está especificado no
+os 31 endpoints do índice do contrato estão implementados. O que a API faz está especificado no
 OrbitWeb (`D:\Projetos\OrbitWeb`, repositório `ByGustavoo/OrbitWeb`), que hoje roda contra um
 simulador:
 
 | Documento no OrbitWeb | Conteúdo |
 |---|---|
-| `docs/api-contrato.md` | Os 30 endpoints: rotas, corpos, respostas, códigos HTTP e erros. **Referência final dos formatos JSON** |
+| `docs/api-contrato.md` | Os 31 endpoints: rotas, corpos, respostas, códigos HTTP e erros. **Referência final dos formatos JSON** |
 | `docs/backend.md` | Entidades, enums, DTOs, validações e fluxos do ponto de vista de quem implementa |
 | `docs/regras-negocio.md` | Regras funcionais com exemplos (prazo, recorrência, métricas) |
 | `src/dados/simulacao/manipuladores/` | O simulador: a implementação de referência quando o contrato deixar dúvida |
