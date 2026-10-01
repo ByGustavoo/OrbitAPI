@@ -163,10 +163,12 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   migration nova, como a `V1.5__AdicionarCategorias.sql`, que usa `ON CONFLICT DO NOTHING` para não
   falhar num banco em que alguém já criou uma categoria com o mesmo nome
 - Mapeamento entidade ↔ DTO com MapStruct
-- Nenhum comentário em arquivo do repositório (exceto `.env`/`.env.example`); explicações vão aqui
-  ou no README
-- Dependências do `build.gradle.kts` agrupadas por ferramenta, grupos separados por linha em branco,
-  sem rótulo, e cada grupo da linha mais curta para a mais longa
+- Nenhum comentário em arquivo do repositório (exceto `.env`/`.env.example` e os rótulos de grupo das
+  dependências); explicações vão aqui ou no README
+- Dependências do `build.gradle.kts` agrupadas, cada grupo com um comentário `// Nome` em cima, na ordem
+  Spring Boot, Redis, MapStruct, Banco de dados, Lombok, Logging, Swagger e Testes, grupos separados por
+  linha em branco (também depois de `dependencies {` e antes do `}`) e cada grupo da linha mais curta
+  para a mais longa
 
 ## Identidade da aplicação
 
