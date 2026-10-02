@@ -67,8 +67,8 @@ src/main/resources/
   log4j2.xml                 console sempre; em prod, arquivo rotativo em /app/logs/OrbitAPI.log (30 dias)
 .run/                        run configurations do IntelliJ (BootRun DEV/PROD, build sem testes, testes)
 docker-compose-postgres.yml  orbit-postgres (PostgreSQL 18, banco orbit) na 5433 e orbit-redis na 6380
-docker-compose-orbitapi.yml  a imagem publicada (OrbitAPI, perfil prod, 9028) e o orbit-redis; banco e CORS
-                             vêm do .env (modelo em .env.example)
+docker-compose-orbitapi.yml  a imagem publicada (OrbitAPI, perfil prod, 9028) e o OrbitRedis, sem porta no host;
+                             banco e CORS vêm do .env (modelo em .env.example)
 Dockerfile                   build com Gradle e runtime em eclipse-temurin:25-jre
 .github/workflows/           workflow.yml (build + testes em todo PR para a main) e release.yml
 ```
