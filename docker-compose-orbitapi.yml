@@ -17,7 +17,7 @@ services:
       - REDIS_IP=redis
       - REDIS_PORT=6379
 
-      - ORBITAPI_CORS_ORIGENS_PERMITIDAS=${ORBITAPI_CORS_ORIGENS_PERMITIDAS:-http://localhost:9031}
+      - ORBITAPI_CORS_ORIGENS_PERMITIDAS=${ORBITAPI_CORS_ORIGENS_PERMITIDAS:-http://localhost:5174}
 
     volumes:
       - ./logs:/app/logs

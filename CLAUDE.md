@@ -111,9 +111,9 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   GitHub. Secrets: `DOCKER_IMAGE` (`gurudohimalaia/orbitapi`), `DOCKER_USERNAME` e `DOCKER_PASSWORD`
 - A versão chega ao jar por `-Pversao` (`version = providers.gradleProperty("versao")...`); não volte
   o `version` para um literal simples
-- **CORS em produção.** O perfil `prod` só libera `http://localhost:5173`, e o OrbitWeb em container
-  roda na 9031 (a 5173 é do PrismaWeb). O `docker-compose-orbitapi.yml` sobrescreve as origens por
-  `ORBITAPI_CORS_ORIGENS_PERMITIDAS`, com padrão `http://localhost:9031`
+- **CORS em produção.** O perfil `prod` só libera `http://localhost:5174`, a porta do OrbitWeb (a
+  5173 é do PrismaWeb). O `docker-compose-orbitapi.yml` sobrescreve as origens por
+  `ORBITAPI_CORS_ORIGENS_PERMITIDAS`, com o mesmo padrão `http://localhost:5174`
 - **Banco a partir do container.** `DATABASE_IP=localhost` aponta para o próprio container; use o IP
   da máquina ou `host.docker.internal`
 
@@ -191,8 +191,7 @@ Os nomes abaixo andam juntos — mudar um sem os outros quebra rotas, migrations
 - **CORS.** O front envia o cabeçalho próprio `X-Fuso-Horario`, que dispara preflight. O
   `CorsConfig` libera `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` e os cabeçalhos
   `Content-Type`, `Accept` e `X-Fuso-Horario` para as origens de `orbitapi.cors.origens-permitidas`:
-  qualquer porta de `localhost` em `dev` (a 5173 costuma estar ocupada pelo PrismaWeb) e
-  `http://localhost:5173` nos demais perfis
+  qualquer porta de `localhost` em `dev` e `http://localhost:5174` nos demais perfis
 - **"Hoje" depende do fuso do cliente.** `X-Fuso-Horario` (IANA) define o dia de cada instante e
   quando uma tarefa fica atrasada (`api-contrato.md`, seção 1.4). Nunca use `LocalDate.now()` num
   service: calcule `Instant.now(clock)` e converta com `fusoHorarioService.obter()`. Sem o

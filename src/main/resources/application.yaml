@@ -7,7 +7,7 @@ server:
 
 orbitapi:
   cors:
-    origens-permitidas: "http://localhost:5173"
+    origens-permitidas: "http://localhost:5174"
 
 spring:
   application:
