@@ -108,7 +108,9 @@ Mesmo modelo do PrismaAPI e do OrbitWeb:
   calcula a versão a partir da última tag `vX.Y.Z` (sem tag, usa o `version` do `build.gradle.kts`),
   com rótulo `release:major` / `release:minor` no PR, `patch` sem rótulo. Publica a imagem
   `linux/amd64` e `linux/arm64` no Docker Hub com a versão e `latest`, e cria a tag e a release no
-  GitHub. Secrets: `DOCKER_IMAGE` (`gurudohimalaia/orbitapi`), `DOCKER_USERNAME` e `DOCKER_PASSWORD`
+  GitHub. As notas da release são a descrição do PR, seguidas do `docker pull` da versão e da lista
+  que o `--generate-notes` monta com os títulos dos PRs; a descrição entra pela variável
+  `DESCRICAO_PR`, nunca interpolada no script, e a execução manual sai sem ela. Secrets: `DOCKER_IMAGE` (`gurudohimalaia/orbitapi`), `DOCKER_USERNAME` e `DOCKER_PASSWORD`
 - A versão chega ao jar por `-Pversao` (`version = providers.gradleProperty("versao")...`); não volte
   o `version` para um literal simples
 - **CORS em produção.** O perfil `prod` só libera `http://localhost:5174`, a porta do OrbitWeb (a
